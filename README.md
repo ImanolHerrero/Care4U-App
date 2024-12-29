@@ -39,7 +39,7 @@ Corre el servidor local
 ```
 
 
-## Ténologias utilizadas
+## Técnologias utilizadas
 
 - React Native y Expo.
 - NativeWind.
