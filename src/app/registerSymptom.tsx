@@ -1,10 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ScrollView, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 
 export default function RegisterSymptom() {
    const [inputText, setInputText] = useState<string>('');
    const [symptoms, setSymptoms] = useState<string[]>([]);
+   const [isFocused, setIsFocused] = useState(false);
    const router = useRouter();
 
    const getCurrentDate = () => {
@@ -38,7 +39,13 @@ export default function RegisterSymptom() {
                   placeholder="Describe tu síntoma aquí..."
                   value={inputText}
                   onChangeText={setInputText}
-                  className="border border-gray-300 rounded-lg p-3 mb-4"
+                  className="border border-gray-300 rounded-lg p-3 mb-4 focus:ring focus:ring-blue focus:outline-none"
+                  style={[
+                     styles.input,
+                     isFocused && styles.inputFocused,
+                  ]}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
                />
 
                <TouchableOpacity
@@ -80,3 +87,14 @@ export default function RegisterSymptom() {
       </View>
    );
 }
+
+const styles = StyleSheet.create({
+   input: {
+      borderWidth: 1,
+      borderColor: '#d1d5db',
+   },
+   inputFocused: {
+      borderColor: '#0F679B',
+      borderWidth: 2,
+   },
+});

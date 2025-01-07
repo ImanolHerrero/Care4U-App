@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { registerUser } from '../utils/scripts';
@@ -9,6 +9,7 @@ export default function Register() {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [confirmPassword, setConfirmPassword] = useState('');
+   const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
    async function handleRegister() {
       if (password !== confirmPassword) {
@@ -26,65 +27,61 @@ export default function Register() {
       }
    }
 
+   const inputFields = [
+      { id: 'name', placeholder: 'Nombre', value: name, onChangeText: setName },
+      { id: 'lastName', placeholder: 'Apellido', value: lastName, onChangeText: setLastName },
+      {
+         id: 'email',
+         placeholder: 'Correo electrónico',
+         value: email,
+         onChangeText: setEmail,
+         keyboardType: 'email-address' as 'email-address',
+         autoCapitalize: 'none' as 'none',
+         autoCorrect: false,
+      },
+      {
+         id: 'password',
+         placeholder: 'Contraseña',
+         value: password,
+         onChangeText: setPassword,
+         secureTextEntry: true,
+      },
+      {
+         id: 'confirmPassword',
+         placeholder: 'Confirma tu contraseña',
+         value: confirmPassword,
+         onChangeText: setConfirmPassword,
+         secureTextEntry: true,
+      },
+   ];
+
    return (
       <View className="flex flex-col justify-center items-center px-8 py-8">
          <View>
             <Text className="text-4xl text-blue font-semibold text-center mb-4">Crea tu cuenta</Text>
-            <Text className="text-center text-xl">Regístrate con tu correo electrónico o ingresa con tus cuentas.</Text>
+            <Text className="text-center text-xl">
+               Regístrate con tu correo electrónico o ingresa con tus cuentas.
+            </Text>
          </View>
 
          <View className="w-full mt-16">
             <Text className="font-semibold text-lg mb-4">Ingresa tus datos para registrarte.</Text>
 
-            <View className="mb-4 w-full">
-               <TextInput
-                  className="border border-gray-300 rounded-full px-4 py-3 text-base"
-                  placeholder="Nombre"
-                  value={name}
-                  onChangeText={setName}
-               />
-            </View>
-
-            <View className="mb-4 w-full">
-               <TextInput
-                  className="border border-gray-300 rounded-full px-4 py-3 text-base"
-                  placeholder="Apellido"
-                  value={lastName}
-                  onChangeText={setLastName}
-               />
-            </View>
-
-            <View className="mb-4 w-full">
-               <TextInput
-                  className="border border-gray-300 rounded-full px-4 py-3 text-base"
-                  placeholder="Correo electrónico"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-               />
-            </View>
-
-            <View className="mb-4 w-full">
-               <TextInput
-                  className="border border-gray-300 rounded-full px-4 py-3 text-base"
-                  placeholder="Contraseña"
-                  secureTextEntry={true}
-                  value={password}
-                  onChangeText={setPassword}
-               />
-            </View>
-
-            <View className="mb-4 w-full">
-               <TextInput
-                  className="border border-gray-300 rounded-full px-4 py-3 text-base"
-                  placeholder="Confirma tu contraseña"
-                  secureTextEntry={true}
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-               />
-            </View>
+            {/** Inputs Section */}
+            {inputFields.map((input) => (
+               <View key={input.id} className="mb-4 w-full">
+                  <TextInput
+                     {...input}
+                     style={[
+                        styles.input,
+                        ...(focusedInput === input.id ? [styles.inputFocused] : []),
+                     ]}
+                     className="rounded-full px-4 py-3 text-base"
+                     onFocus={() => setFocusedInput(input.id)}
+                     onBlur={() => setFocusedInput(null)}
+                  />
+               </View>
+            ))}
          </View>
 
          <TouchableOpacity
@@ -94,12 +91,22 @@ export default function Register() {
             <Text className="text-white text-center text-lg">Registrarme</Text>
          </TouchableOpacity>
 
-         <TouchableOpacity
-            onPress={() => router.push('/login')}
-            className="mt-8"
-         >
-            <Text className="text-center text-lg font-semibold">¿Ya tienes una cuenta? Ingresar</Text>
+         <TouchableOpacity onPress={() => router.push('/login')} className="mt-8">
+            <Text className="text-center text-lg font-semibold">
+               ¿Ya tienes una cuenta? Ingresar
+            </Text>
          </TouchableOpacity>
       </View>
    );
 }
+
+const styles = StyleSheet.create({
+   input: {
+      borderWidth: 1,
+      borderColor: '#d1d5db',
+   },
+   inputFocused: {
+      borderColor: '#0F679B',
+      borderWidth: 2,
+   },
+});

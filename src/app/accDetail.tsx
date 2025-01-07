@@ -44,7 +44,7 @@ const MultiStepForm: React.FC = () => {
 
    const nextStep = () => {
       if (step === 5) {
-         router.push('/home');
+         router.push('/login');
       } else {
          setStep((prevStep) => Math.min(prevStep + 1, 5));
       }

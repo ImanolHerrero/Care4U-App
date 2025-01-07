@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { validateLoginInputs } from '../utils/auth';
 import { loginUser } from '../utils/scripts';
@@ -14,6 +14,8 @@ const LoginScreen = () => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [errors, setErrors] = useState<Errors>({});
+   const [isEmailFocused, setIsEmailFocused] = useState(false);
+   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
    const handleLogin = async () => {
       const validationErrors = validateLoginInputs(email, password);
@@ -53,32 +55,46 @@ const LoginScreen = () => {
 
             <View className="mb-4 w-full">
                <TextInput
-                  className={`border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-full px-4 py-3 text-base`}
+                  style={[
+                     styles.input,
+                     isEmailFocused && styles.inputFocused,
+                     errors.email && styles.inputError,
+                  ]}
+                  className="rounded-full px-4 py-3 text-base"
                   placeholder="Correo electrónico"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
                   value={email}
+                  onFocus={() => setIsEmailFocused(true)}
+                  onBlur={() => setIsEmailFocused(false)}
                   onChangeText={(text) => {
                      setEmail(text);
                      if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
                   }}
                />
-               {errors.email && <Text className="text-red-500 mt-2">{errors.email}</Text>}
+               {errors.email && <Text className="text-deepRed mt-2">{errors.email}</Text>}
             </View>
 
             <View className="mb-6 w-full">
                <TextInput
-                  className={`border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-full px-4 py-3 text-base`}
+                  style={[
+                     styles.input,
+                     isPasswordFocused && styles.inputFocused,
+                     errors.password && styles.inputError,
+                  ]}
+                  className="rounded-full px-4 py-3 text-base"
                   placeholder="Contraseña"
                   secureTextEntry
                   value={password}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
                   onChangeText={(text) => {
                      setPassword(text);
                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
                   }}
                />
-               {errors.password && <Text className="text-red-500 mt-2">{errors.password}</Text>}
+               {errors.password && <Text className="text-deepRed mt-2">{errors.password}</Text>}
             </View>
 
             <TouchableOpacity onPress={() => router.push('/recoverPassword')} className="mt-2">
@@ -98,5 +114,19 @@ const LoginScreen = () => {
       </ScrollView>
    );
 };
+
+const styles = StyleSheet.create({
+   input: {
+      borderWidth: 1,
+      borderColor: '#d1d5db', // border-gray-300
+   },
+   inputFocused: {
+      borderColor: '#0F679B', // border-blue-500 
+      borderWidth: 2,
+   },
+   inputError: {
+      borderColor: '#E33142', // border-deepRed
+   },
+});
 
 export default LoginScreen;

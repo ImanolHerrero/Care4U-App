@@ -6,7 +6,7 @@ import './../../global.css';
 
 const Layout = () => {
       const pathname = usePathname();
-      const excludedRoutes = ['/', '/login', '/recoverPassword', '/register', '/accDetail'];
+      const excludedRoutes = ['/', '/login', '/recoverPassword', '/register', '/accDetail', '/codePassword', '/updatePassword'];
 
       const isExcludedRoute = excludedRoutes.includes(pathname);
 

@@ -5,7 +5,7 @@ export async function registerUser(
    password: string
 ): Promise<{ success: boolean; message: string }> {
    try {
-      const response = await fetch('http://care4u.us-east-2.elasticbeanstalk.com/create_user', {
+      const response = await fetch('http://care4u.us-east-1.elasticbeanstalk.com/create_user', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export async function registerUser(
 
 export async function loginUser(email: string, password: string): Promise<{ success: boolean; message: string }> {
    try {
-      const response = await fetch('http://care4u.us-east-2.elasticbeanstalk.com/login', {
+      const response = await fetch('http://care4u.us-east-1.elasticbeanstalk.com/login', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export async function loginUser(email: string, password: string): Promise<{ succ
 
 export async function resetPasswordGetCode(email: string): Promise<{ success: boolean; message: string }> {
    try {
-      const response = await fetch('http://care4u.us-east-2.elasticbeanstalk.com/reset_password_get_code', {
+      const response = await fetch('http://care4u.us-east-1.elasticbeanstalk.com/reset_password_get_code', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -74,3 +74,67 @@ export async function resetPasswordGetCode(email: string): Promise<{ success: bo
       return { success: false, message: error.message || 'Error de red. Intenta nuevamente.' };
    }
 }
+
+export async function validatePasswordCode(email: string, code: number): Promise<{ success: boolean; message: string }> {
+   try {
+      const response = await fetch('http://care4u.us-east-1.elasticbeanstalk.com/validate_password_code', {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({ email, code }),
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(errorData.message || 'Código inválido. Intenta nuevamente.');
+      }
+
+      const data = await response.json();
+      return { success: true, message: data.message || 'Código verificado exitosamente.' };
+   } catch (error: any) {
+      return { success: false, message: error.message || 'Error de red. Intenta nuevamente.' };
+   }
+}
+
+
+export async function updatePassword(
+   email: string,
+   code: number,
+   password: string
+): Promise<{ success: boolean; message: string }> {
+   console.log(`Enviando solicitud para actualizar la contraseña: email=${email}, code=${code}, password=${password}`);
+
+   try {
+      const response = await fetch('http://care4u.us-east-1.elasticbeanstalk.com/update_password', {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({ email, code, password }),
+      });
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         console.error('Error en la respuesta de la API:', errorData);
+         throw new Error(errorData.message || 'Error al actualizar la contraseña. Intenta nuevamente.');
+      }
+
+      const data = await response.json();
+      console.log('Respuesta exitosa de la API:', data);
+
+      return {
+         success: true,
+         message: data.message || 'Contraseña actualizada correctamente.',
+      };
+   } catch (error: any) {
+      console.error('Error en la solicitud de actualización de contraseña:', error);
+      return {
+         success: false,
+         message: error.message || 'Error de red. Intenta nuevamente.',
+      };
+   }
+}
+
+
+
