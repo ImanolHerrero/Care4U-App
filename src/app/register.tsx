@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { registerUser } from '../utils/scripts';
@@ -10,6 +10,10 @@ export default function Register() {
    const [password, setPassword] = useState('');
    const [confirmPassword, setConfirmPassword] = useState('');
    const [focusedInput, setFocusedInput] = useState<string | null>(null);
+   const [passwordVisible, setPasswordVisible] = useState(false);
+   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+   const eyesIcon = require('../../assets/eyesIcon.png');
 
    async function handleRegister() {
       if (password !== confirmPassword) {
@@ -44,14 +48,14 @@ export default function Register() {
          placeholder: 'Contraseña',
          value: password,
          onChangeText: setPassword,
-         secureTextEntry: true,
+         secureTextEntry: !passwordVisible,
       },
       {
          id: 'confirmPassword',
          placeholder: 'Confirma tu contraseña',
          value: confirmPassword,
          onChangeText: setConfirmPassword,
-         secureTextEntry: true,
+         secureTextEntry: !confirmPasswordVisible,
       },
    ];
 
@@ -72,22 +76,31 @@ export default function Register() {
                <View key={input.id} className="mb-4 w-full">
                   <TextInput
                      {...input}
-                     style={[
-                        styles.input,
-                        ...(focusedInput === input.id ? [styles.inputFocused] : []),
-                     ]}
+                     style={[styles.input, ...(focusedInput === input.id ? [styles.inputFocused] : [])]}
                      className="rounded-full px-4 py-3 text-base"
                      onFocus={() => setFocusedInput(input.id)}
                      onBlur={() => setFocusedInput(null)}
                   />
+                  {(input.id === 'password' || input.id === 'confirmPassword') && (
+                     <TouchableOpacity
+                        onPress={() =>
+                           input.id === 'password'
+                              ? setPasswordVisible((prev) => !prev)
+                              : setConfirmPasswordVisible((prev) => !prev)
+                        }
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                     >
+                        <Image
+                           source={eyesIcon}
+                           style={{ width: 24, height: 24 }}
+                        />
+                     </TouchableOpacity>
+                  )}
                </View>
             ))}
          </View>
 
-         <TouchableOpacity
-            onPress={handleRegister}
-            className="bg-blue py-3 rounded-full mt-8 w-full"
-         >
+         <TouchableOpacity onPress={handleRegister} className="bg-blue py-3 rounded-full mt-8 w-full">
             <Text className="text-white text-center text-lg">Registrarme</Text>
          </TouchableOpacity>
 

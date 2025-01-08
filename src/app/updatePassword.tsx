@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { updatePassword } from '../utils/scripts';
@@ -9,6 +9,8 @@ export default function UpdatePassword() {
    const [loading, setLoading] = useState(false);
    const [isFocusedPassword, setIsFocusedPassword] = useState(false);
    const [isFocusedConfirmPassword, setIsFocusedConfirmPassword] = useState(false);
+   const [passwordVisible, setPasswordVisible] = useState(false);
+   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
    const router = useRouter();
    const { email, code } = useLocalSearchParams();
@@ -16,6 +18,8 @@ export default function UpdatePassword() {
    const emailString = Array.isArray(email) ? email[0] : email;
    const codeNumber = Number(code);
    console.log(codeNumber);
+
+   const eyesIcon = require('../../assets/eyesIcon.png');
 
    const handleUpdatePassword = async () => {
       console.log('Iniciando actualización de contraseña...');
@@ -51,38 +55,60 @@ export default function UpdatePassword() {
          </Text>
          <Text className="text-center mb-8">Ya puedes cambiar tu contraseña</Text>
 
-         <TextInput
-            placeholder="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={[
-               styles.input,
-               isFocusedPassword && styles.inputFocused,
-            ]}
-            className="rounded-full p-3 mb-6"
-            onFocus={() => setIsFocusedPassword(true)}
-            onBlur={() => setIsFocusedPassword(false)}
-         />
+         <View className="relative mb-6">
+            <TextInput
+               placeholder="Contraseña"
+               value={password}
+               onChangeText={setPassword}
+               secureTextEntry={!passwordVisible}
+               style={[
+                  styles.input,
+                  isFocusedPassword && styles.inputFocused,
+               ]}
+               className="rounded-full p-3"
+               onFocus={() => setIsFocusedPassword(true)}
+               onBlur={() => setIsFocusedPassword(false)}
+            />
+            <TouchableOpacity
+               onPress={() => setPasswordVisible((prev) => !prev)}
+               className="absolute right-4 top-1/2 transform -translate-y-1/2"
+            >
+               <Image source={eyesIcon} style={{ width: 24, height: 24 }} />
+            </TouchableOpacity>
+         </View>
 
-         <TextInput
-            placeholder="Confirmar contraseña"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            style={[
-               styles.input,
-               isFocusedConfirmPassword && styles.inputFocused,
-            ]}
-            className="rounded-full p-3 mb-6"
-            onFocus={() => setIsFocusedConfirmPassword(true)}
-            onBlur={() => setIsFocusedConfirmPassword(false)}
-         />
+         <View className="relative mb-6">
+            <TextInput
+               placeholder="Confirmar contraseña"
+               value={confirmPassword}
+               onChangeText={setConfirmPassword}
+               secureTextEntry={!confirmPasswordVisible}
+               style={[
+                  styles.input,
+                  isFocusedConfirmPassword && styles.inputFocused,
+               ]}
+               className="rounded-full px-4 py-3"
+               onFocus={() => setIsFocusedConfirmPassword(true)}
+               onBlur={() => setIsFocusedConfirmPassword(false)}
+            />
+            <TouchableOpacity
+               onPress={() => setConfirmPasswordVisible((prev) => !prev)}
+               className="absolute right-4 top-1/2 transform -translate-y-1/2"
+            >
+               <Image
+                  source={eyesIcon}
+                  style={{
+                     width: 24,
+                     height: 24,
+                  }}
+               />
+            </TouchableOpacity>
+         </View>
 
          <TouchableOpacity
             onPress={handleUpdatePassword}
             disabled={loading}
-            className={`py-3 rounded-full ${loading ? 'bg-blue/70' : 'bg-blue'}`}
+            className={`px-4 py-3 rounded-full ${loading ? 'bg-blue/70' : 'bg-blue'}`}
          >
             <Text className="text-white text-center font-semibold">
                {loading ? 'Actualizando...' : 'Cambiar contraseña'}

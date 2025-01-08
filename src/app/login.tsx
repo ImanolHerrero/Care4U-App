@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { validateLoginInputs } from '../utils/auth';
 import { loginUser } from '../utils/scripts';
@@ -16,6 +16,9 @@ const LoginScreen = () => {
    const [errors, setErrors] = useState<Errors>({});
    const [isEmailFocused, setIsEmailFocused] = useState(false);
    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+   const [passwordVisible, setPasswordVisible] = useState(false);
+
+   const eyesIcon = require('../../assets/eyesIcon.png');
 
    const handleLogin = async () => {
       const validationErrors = validateLoginInputs(email, password);
@@ -39,7 +42,6 @@ const LoginScreen = () => {
    return (
       <ScrollView>
          <View className="flex flex-col justify-center items-center px-8 py-8">
-
             <View>
                <Text className="text-4xl text-blue font-semibold text-center mb-4">
                   Te damos la bienvenida
@@ -55,11 +57,7 @@ const LoginScreen = () => {
 
             <View className="mb-4 w-full">
                <TextInput
-                  style={[
-                     styles.input,
-                     isEmailFocused && styles.inputFocused,
-                     errors.email && styles.inputError,
-                  ]}
+                  style={[styles.input, isEmailFocused && styles.inputFocused, errors.email && styles.inputError]}
                   className="rounded-full px-4 py-3 text-base"
                   placeholder="Correo electrónico"
                   keyboardType="email-address"
@@ -77,23 +75,27 @@ const LoginScreen = () => {
             </View>
 
             <View className="mb-6 w-full">
-               <TextInput
-                  style={[
-                     styles.input,
-                     isPasswordFocused && styles.inputFocused,
-                     errors.password && styles.inputError,
-                  ]}
-                  className="rounded-full px-4 py-3 text-base"
-                  placeholder="Contraseña"
-                  secureTextEntry
-                  value={password}
-                  onFocus={() => setIsPasswordFocused(true)}
-                  onBlur={() => setIsPasswordFocused(false)}
-                  onChangeText={(text) => {
-                     setPassword(text);
-                     if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                  }}
-               />
+               <View className="relative">
+                  <TextInput
+                     style={[styles.input, isPasswordFocused && styles.inputFocused, errors.password && styles.inputError]}
+                     className="rounded-full px-4 py-3 text-base"
+                     placeholder="Contraseña"
+                     secureTextEntry={!passwordVisible}
+                     value={password}
+                     onFocus={() => setIsPasswordFocused(true)}
+                     onBlur={() => setIsPasswordFocused(false)}
+                     onChangeText={(text) => {
+                        setPassword(text);
+                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                     }}
+                  />
+                  <TouchableOpacity
+                     onPress={() => setPasswordVisible((prev) => !prev)}
+                     className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                  >
+                     <Image source={eyesIcon} style={{ width: 24, height: 24 }} />
+                  </TouchableOpacity>
+               </View>
                {errors.password && <Text className="text-deepRed mt-2">{errors.password}</Text>}
             </View>
 
@@ -118,14 +120,14 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
    input: {
       borderWidth: 1,
-      borderColor: '#d1d5db', // border-gray-300
+      borderColor: '#d1d5db',
    },
    inputFocused: {
-      borderColor: '#0F679B', // border-blue-500 
+      borderColor: '#0F679B',
       borderWidth: 2,
    },
    inputError: {
-      borderColor: '#E33142', // border-deepRed
+      borderColor: '#E33142',
    },
 });
 
